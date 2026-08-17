@@ -1,0 +1,8 @@
+{
+  "name": "vivi-presson-fit",
+  "version": "1.0.0",
+  "description": "Cuestionario automatizado para Vivi Presson Fit",
+  "dependencies": {
+    "@octokit/rest": "^20.0.2"
+  }
+}

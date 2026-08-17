@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Vivi Presson Fit - Cuestionario Inicial</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .screen { display: none; padding: 30px 25px; min-height: 500px; }
+        .screen.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { color: #667eea; margin-bottom: 15px; font-size: 28px; line-height: 1.2; }
+        h2 { color: #444; margin-bottom: 20px; font-size: 20px; line-height: 1.4; }
+        .section-indicator { background: #f0f0f0; padding: 8px 15px; border-radius: 20px; display: inline-block; font-size: 12px; color: #666; margin-bottom: 15px; font-weight: 600; }
+        .progress-bar { background: #f0f0f0; height: 6px; border-radius: 3px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; transition: width 0.4s ease; }
+        .progress-text { text-align: center; font-size: 13px; color: #888; margin-bottom: 10px; }
+        p { line-height: 1.6; margin-bottom: 15px; color: #555; }
+        .btn { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-top: 20px; }
+        .btn:active { transform: scale(0.98); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: #f0f0f0; color: #666; }
+        textarea, input[type="text"] { width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; font-family: inherit; resize: vertical; min-height: 100px; transition: border-color 0.3s; }
+        textarea:focus, input[type="text"]:focus { outline: none; border-color: #667eea; }
+        .option-group { margin: 15px 0; }
+        .option { display: block; padding: 14px; background: #f8f8f8; border: 2px solid #e0e0e0; border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; font-size: 15px; }
+        .option:hover { background: #f0f0f0; }
+        .option.selected { background: #e8eefc; border-color: #667eea; color: #667eea; font-weight: 600; }
+        .option-label { display: flex; align-items: center; gap: 10px; }
+        .check-icon { width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .radio-icon { width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .option.selected .check-icon, .option.selected .radio-icon { background: #667eea; border-color: #667eea; }
+        .option.selected .check-icon::after { content: '✓'; color: white; font-weight: bold; }
+        .option.selected .radio-icon::after { content: ''; width: 10px; height: 10px; background: white; border-radius: 50%; }
+        .ranking-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #f8f8f8; border-radius: 10px; margin-bottom: 10px; }
+        .ranking-item select { padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; background: white; cursor: pointer; }
+        .ranking-label { flex: 1; font-size: 15px; }
+        .final-screen { text-align: center; padding: 40px 25px; }
+        .checkmark { width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-size: 50px; animation: scaleIn 0.5s ease; }
+        @keyframes scaleIn { from { transform: scale(0); } to { transform: scale(1); } }
+        .loader { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .multi-fields { margin-top: 15px; }
+        .multi-fields input { min-height: 50px; margin-bottom: 10px; }
+        .hint { font-size: 13px; color: #888; font-style: italic; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container" id="app"></div>
+    <script>
+        const questions = [
+            { id: 1, section: "Tu negocio", type: "textarea", question: "¿Cuáles son los servicios que ofreces actualmente?", hint: "Por ejemplo: entrenamiento presencial, online, rutinas personalizadas, seguimiento, clases, etc." },
+            { id: 2, section: "Tu negocio", type: "textarea", question: "¿Qué servicio quieres impulsar o hacer crecer principalmente?" },
+            { id: 3, section: "Tu negocio", type: "textarea", question: "¿Trabajas con paquetes, programas por semanas/meses o sesiones individuales?" },
+            { id: 4, section: "Tu negocio", type: "textarea", question: "¿A qué tipo de cliente quieres llegar principalmente?" },
+            { id: 5, section: "Página web", type: "textarea", question: "¿Qué te gustaría conseguir con tu nueva página web?" },
+            { id: 6, section: "Página web", type: "multi", question: "¿Qué quieres que pueda hacer una persona desde la web?", options: ["Conocerte y conocer tu método", "Ver tus servicios", "Ver testimonios/resultados", "Solicitar información", "Reservar una sesión", "Conocer tus programas/rutinas", "Acceder a sus rutinas o programas"] },
+            { id: 7, section: "Página web", type: "textarea", question: "¿Tienes logo, colores, fotografías y videos que quieras conservar en la nueva imagen?" },
+            { id: 8, section: "Página web", type: "textarea", question: "¿Hay alguna página web o estilo visual que te guste como referencia?" },
+            { id: 9, section: "Rutinas y programas online", type: "textarea", question: "¿Qué tipo de rutinas o programas quieres ofrecer online?" },
+            { id: 10, section: "Rutinas y programas online", type: "textarea", question: "¿Serán programas iguales para varios clientes, rutinas personalizadas para cada persona o ambos?" },
+            { id: 11, section: "Rutinas y programas online", type: "textarea", question: "¿Cómo entregas actualmente las rutinas a tus clientes?" },
+            { id: 12, section: "Rutinas y programas online", type: "textarea", question: "¿Qué material incluirá cada programa?", hint: "Videos, PDFs, rutinas escritas, calendarios, recomendaciones, etc." },
+            { id: 13, section: "Rutinas y programas online", type: "radio", question: "¿Cuánto tiempo debería tener acceso una persona a cada programa?", options: ["30 días", "8 semanas", "3 meses", "Acceso permanente", "Otro"] },
+            { id: 14, section: "Rutinas y programas online", type: "yesno", question: "¿Quieres que el acceso a Google Drive sea automático?", hint: "Registrar al cliente, darle acceso al programa, avisarle y retirar el acceso cuando corresponda" },
+            { id: 15, section: "Rutinas y programas online", type: "yesno", question: "En las rutinas personalizadas, ¿quieres que cada cliente tenga su propia carpeta privada?" },
+            { id: 16, section: "Citas y sesiones", type: "multi", question: "¿Qué tipos de citas necesitas manejar?", options: ["Presenciales", "Virtuales", "Evaluación inicial", "Seguimiento", "Entrenamiento"] },
+            { id: 17, section: "Citas y sesiones", type: "textarea", question: "¿Cómo coordinas actualmente los horarios con tus clientes?" },
+            { id: 18, section: "Citas y sesiones", type: "yesno", question: "¿Quieres que puedan ver tu disponibilidad y reservar solos desde la página web?" },
+            { id: 19, section: "Citas y sesiones", type: "yesno", question: "¿Quieres recordatorios automáticos antes de cada sesión?" },
+            { id: 20, section: "Citas y sesiones", type: "radio", question: "Para sesiones virtuales, ¿qué plataforma prefieres utilizar?", options: ["Google Meet", "Zoom", "WhatsApp", "Otra"] },
+            { id: 21, section: "Instagram y redes sociales", type: "multi", question: "¿Qué redes quieres que manejemos además de Instagram?", options: ["Facebook", "TikTok", "YouTube", "LinkedIn", "Pinterest"] },
+            { id: 22, section: "Instagram y redes sociales", type: "textarea", question: "¿Qué es lo que más trabajo te da actualmente al crear contenido?", hint: "Pensar ideas, grabar, editar, escribir textos, publicar, responder mensajes, etc." },
+            { id: 23, section: "Instagram y redes sociales", type: "yesno", question: "¿Estarías dispuesta a grabar varios videos en un solo día para que nosotros los transformemos en contenido para toda la semana?" },
+            { id: 24, section: "Instagram y redes sociales", type: "yesno", question: "¿Quieres que la IA nos ayude con la edición de videos, subtítulos, cortes, ideas, textos y adaptación del contenido a diferentes redes?" },
+            { id: 25, section: "Instagram y redes sociales", type: "yesno", question: "¿Quieres revisar y aprobar las publicaciones antes de que sean programadas?" },
+            { id: 26, section: "Instagram y mensajes", type: "textarea", question: "¿Qué preguntas recibes con mayor frecuencia por Instagram?" },
+            { id: 27, section: "Instagram y mensajes", type: "yesno", question: "¿Quieres automatizar algunas respuestas y dejar otras para responderlas personalmente?" },
+            { id: 28, section: "Instagram y mensajes", type: "yesno", question: "¿Te gustaría utilizar palabras clave en Reels y Stories?", hint: "Por ejemplo: Comenta RUTINA y te envío la información" },
+            { id: 29, section: "Instagram y mensajes", type: "radio", question: "Cuando alguien muestra interés, ¿quieres llevarlo principalmente a...?", options: ["WhatsApp", "La página web", "Continuar la conversación por Instagram"] },
+            { id: 30, section: "Clientes y seguimiento", type: "textarea", question: "¿Cómo llevas actualmente el control de tus clientes, programas, sesiones y fechas?" },
+            { id: 31, section: "Clientes y seguimiento", type: "yesno", question: "¿Te gustaría tener un solo lugar donde puedas ver: clientes activos, prospectos, programa de cada cliente, sesiones utilizadas/restantes, fechas y próximos seguimientos?" },
+            { id: 32, section: "Clientes y seguimiento", type: "yesno", question: "¿Quieres recibir avisos cuando a un cliente le queden pocas sesiones o esté por terminar su programa?" },
+            { id: 33, section: "Clientes y seguimiento", type: "yesno", question: "¿Quieres automatizar el seguimiento de personas que pidieron información y después dejaron de responder?" },
+            { id: 34, section: "Clientes y seguimiento", type: "yesno", question: "¿Quieres automatizar la solicitud de testimonios cuando una persona termine un programa?" },
+            { id: 35, section: "Lo más importante", type: "multi-text", question: "¿Cuáles son las 3 tareas que actualmente te quitan más tiempo y te gustaría dejar de hacer manualmente?" },
+            { id: 36, section: "Lo más importante", type: "textarea", question: "¿Qué cosas prefieres seguir haciendo tú personalmente y NO quieres automatizar?" },
+            { id: 37, section: "Lo más importante", type: "textarea", question: "Si dentro de 6 meses este sistema estuviera funcionando como quieres, ¿qué tendría que haber mejorado para que consideres que realmente valió la pena?" }
+        ];
+
+        const priorities = ["Página web", "Conseguir nuevos clientes", "Automatizar rutinas/programas y accesos", "Automatizar citas y seguimiento", "Automatizar creación, edición y publicación de contenido"];
+
+        let currentScreen = 0;
+        let answers = {};
+        let priorityValues = {};
+
+        const saved = localStorage.getItem('vivi_quiz_state');
+        if (saved) {
+            const state = JSON.parse(saved);
+            currentScreen = state.currentScreen;
+            answers = state.answers || {};
+            priorityValues = state.priorityValues || {};
+        }
+
+        function saveState() {
+            localStorage.setItem('vivi_quiz_state', JSON.stringify({ currentScreen, answers, priorityValues }));
+        }
+
+        function renderScreen() {
+            const app = document.getElementById('app');
+            if (currentScreen === 0) {
+                app.innerHTML = '<div class="screen active"><h1>Vivi Presson Fit</h1><h2>Cuestionario Inicial</h2><p>Este cuestionario tiene como objetivo conocer cómo trabajas actualmente, qué quieres mejorar y qué partes de tu negocio te gustaría simplificar o automatizar.</p><p>Tus respuestas se enviarán automáticamente al finalizar. Puedes tomarte tu tiempo.</p><button class="btn" onclick="nextScreen()">Comenzar</button></div>';
+            } else if (currentScreen <= questions.length) {
+                const q = questions[currentScreen - 1];
+                const progress = ((currentScreen) / (questions.length + 1)) * 100;
+                let fieldHTML = '';
+                if (q.type === 'textarea') {
+                    fieldHTML = `<textarea id="q${q.id}" placeholder="Escribe tu respuesta...">${answers[q.id] || ''}</textarea>`;
+                } else if (q.type === 'multi') {
+                    fieldHTML = `<div class="option-group" id="q${q.id}-group">`;
+                    const selected = (answers[q.id] || '').split(',').filter(x => x);
+                    q.options.forEach(opt => {
+                        const isSelected = selected.includes(opt);
+                        fieldHTML += `<div class="option ${isSelected ? 'selected' : ''}" onclick="toggleMulti(${q.id}, '${opt.replace(/'/g, "\\'")}')"><div class="option-label"><div class="check-icon"></div><span>${opt}</span></div></div>`;
+                    });
+                    fieldHTML += `</div>`;
+                } else if (q.type === 'radio') {
+                    fieldHTML = `<div class="option-group" id="q${q.id}-group">`;
+                    q.options.forEach(opt => {
+                        const isSelected = answers[q.id] === opt;
+                        fieldHTML += `<div class="option ${isSelected ? 'selected' : ''}" onclick="selectRadio(${q.id}, '${opt.replace(/'/g, "\\'")}')"><div class="option-label"><div class="radio-icon"></div><span>${opt}</span></div></div>`;
+                    });
+                    fieldHTML += `</div>`;
+                } else if (q.type === 'yesno') {
+                    fieldHTML = `<div class="option-group" id="q${q.id}-group"><div class="option ${answers[q.id] === 'Sí' ? 'selected' : ''}" onclick="selectRadio(${q.id}, 'Sí')"><div class="option-label"><div class="radio-icon"></div><span>Sí</span></div></div><div class="option ${answers[q.id] === 'No' ? 'selected' : ''}" onclick="selectRadio(${q.id}, 'No')"><div class="option-label"><div class="radio-icon"></div><span>No</span></div></div></div>`;
+                } else if (q.type === 'multi-text') {
+                    fieldHTML = `<div class="multi-fields"><input type="text" id="q${q.id}-1" placeholder="1. Tarea que te quita más tiempo..." value="${answers[q.id + '_1'] || ''}"><input type="text" id="q${q.id}-2" placeholder="2. Segunda tarea..." value="${answers[q.id + '_2'] || ''}"><input type="text" id="q${q.id}-3" placeholder="3. Tercera tarea..." value="${answers[q.id + '_3'] || ''}"></div>`;
+                }
+                app.innerHTML = `<div class="screen active"><div class="section-indicator">Sección: ${q.section}</div><div class="progress-text">Pregunta ${currentScreen} de ${questions.length}</div><div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div><h2>${currentScreen}. ${q.question}</h2>${q.hint ? `<p class="hint">${q.hint}</p>` : ''}${fieldHTML}<button class="btn" onclick="nextScreen()">Guardar y continuar</button><button class="btn btn-secondary" onclick="prevScreen()">Atrás</button></div>`;
+            } else if (currentScreen === questions.length + 1) {
+                let rankHTML = '';
+                priorities.forEach((p, i) => {
+                    rankHTML += `<div class="ranking-item"><span class="ranking-label">${p}</span><select id="rank-${i}" onchange="updatePriority(${i})"><option value="">-</option>${[1,2,3,4,5].map(n => `<option value="${n}" ${priorityValues[p] == n ? 'selected' : ''}>${n}</option>`).join('')}</select></div>`;
+                });
+                app.innerHTML = `<div class="screen active"><div class="section-indicator">Prioridades</div><div class="progress-text">Último paso</div><div class="progress-bar"><div class="progress-fill" style="width: 100%"></div></div><h2>Ordena del 1 al 5 según lo más importante para ti</h2>${rankHTML}<button class="btn" onclick="submitQuiz()">Enviar respuestas</button><button class="btn btn-secondary" onclick="prevScreen()">Atrás</button></div>`;
+            } else {
+                app.innerHTML = '<div class="screen active final-screen"><div class="checkmark">✓</div><h1>¡Gracias!</h1><p>Tus respuestas han sido enviadas correctamente.</p><p>Las analizaré y te contactaré pronto.</p></div>';
+            }
+        }
+
+        function toggleMulti(qId, opt) {
+            const current = (answers[qId] || '').split(',').filter(x => x);
+            const idx = current.indexOf(opt);
+            if (idx > -1) { current.splice(idx, 1); } else { current.push(opt); }
+            answers[qId] = current.join(',');
+            saveState();
+            renderScreen();
+        }
+
+        function selectRadio(qId, opt) {
+            answers[qId] = opt;
+            saveState();
+            renderScreen();
+        }
+
+        function updatePriority(idx) {
+            const val = document.getElementById(`rank-${idx}`).value;
+            priorityValues[priorities[idx]] = val;
+            saveState();
+        }
+
+        function nextScreen() {
+            if (currentScreen > 0 && currentScreen <= questions.length) {
+                const q = questions[currentScreen - 1];
+                if (q.type === 'textarea') { answers[q.id] = document.getElementById(`q${q.id}`).value; }
+                else if (q.type === 'multi-text') {
+                    answers[q.id + '_1'] = document.getElementById(`q${q.id}-1`).value;
+                    answers[q.id + '_2'] = document.getElementById(`q${q.id}-2`).value;
+                    answers[q.id + '_3'] = document.getElementById(`q${q.id}-3`).value;
+                }
+            }
+            saveState();
+            currentScreen++;
+            renderScreen();
+        }
+
+        function prevScreen() {
+            if (currentScreen > 0) {
+                if (currentScreen > 0 && currentScreen <= questions.length) {
+                    const q = questions[currentScreen - 1];
+                    if (q.type === 'textarea') { answers[q.id] = document.getElementById(`q${q.id}`).value; }
+                    else if (q.type === 'multi-text') {
+                        answers[q.id + '_1'] = document.getElementById(`q${q.id}-1`).value;
+                        answers[q.id + '_2'] = document.getElementById(`q${q.id}-2`).value;
+                        answers[q.id + '_3'] = document.getElementById(`q${q.id}-3`).value;
+                    }
+                }
+                saveState();
+                currentScreen--;
+                renderScreen();
+            }
+        }
+
+        async function submitQuiz() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span> Enviando...';
+            const payload = { answers: answers, priorities: priorityValues, timestamp: new Date().toISOString() };
+            try {
+                const response = await fetch('/.netlify/functions/guardar-respuesta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (response.ok) {
+                    localStorage.removeItem('vivi_quiz_state');
+                    currentScreen = questions.length + 2;
+                    renderScreen();
+                } else { throw new Error('Error al enviar'); }
+            } catch (err) {
+                alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
+                btn.disabled = false;
+                btn.innerHTML = 'Enviar respuestas';
+            }
+        }
+
+        renderScreen();
+    </script>
+</body>
+</html>
