@@ -69,16 +69,8 @@ exports.handler = async function(event, context) {
         sections.forEach(section => {
             content += `\n[${section.name.toUpperCase()}]\n`;
             content += '------------------------------------------\n';
-            for (let i = section.range[0]; i <= section.range[1]; i++) {
-                let ans = '';
-                if (i === 35) {
-                    const t1 = answers['35_1'] || '';
-                    const t2 = answers['35_2'] || '';
-                    const t3 = answers['35_3'] || '';
-                    ans = `  1. ${t1}\n  2. ${t2}\n  3. ${t3}`;
-                } else {
-                    ans = answers[i] || '(sin respuesta)';
-                }
+               for (let i = section.range[0]; i <= section.range[1]; i++) {
+                const ans = answers[i] || '(sin respuesta)';
                 content += `\nResp.${i}.- ${questionTexts[i]}\n  → ${ans}\n`;
             }
         });
