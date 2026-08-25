@@ -1,205 +1,598 @@
-<!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#1a1a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<title>Vivi Presson Fit - Cuestionario Inicial</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#333}
-.container{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
-.screen{display:none;padding:30px 25px;min-height:500px}
-.screen.active{display:block;animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-h1{color:#667eea;margin-bottom:15px;font-size:28px}
-h2{color:#444;margin-bottom:20px;font-size:20px;line-height:1.4}
-.section-indicator{background:#f0f0f0;padding:8px 15px;border-radius:20px;display:inline-block;font-size:12px;color:#666;margin-bottom:15px;font-weight:600}
-.progress-bar{background:#f0f0f0;height:6px;border-radius:3px;margin:20px 0;overflow:hidden}
-.progress-fill{background:linear-gradient(90deg,#667eea,#764ba2);height:100%;transition:width .4s ease}
-.progress-text{text-align:center;font-size:13px;color:#888;margin-bottom:10px}
-p{line-height:1.6;margin-bottom:15px;color:#555}
-.btn{display:block;width:100%;padding:16px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-top:20px}
-.btn:active{transform:scale(.98)}
-.btn:disabled{opacity:.5}
-.btn-secondary{background:#f0f0f0;color:#666}
-textarea{width:100%;padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:inherit;resize:vertical;min-height:100px}
-textarea:focus{outline:none;border-color:#667eea}
-.option{display:block;padding:14px;background:#f8f8f8;border:2px solid #e0e0e0;border-radius:10px;margin-bottom:10px;cursor:pointer;font-size:15px}
-.option.selected{background:#e8eefc;border-color:#667eea;color:#667eea;font-weight:600}
-.option-label{display:flex;align-items:center;gap:10px}
-.check-icon{width:22px;height:22px;border:2px solid #ccc;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.radio-icon{width:22px;height:22px;border:2px solid #ccc;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.option.selected .check-icon,.option.selected .radio-icon{background:#667eea;border-color:#667eea}
-.option.selected .check-icon::after{content:'✓';color:#fff;font-weight:bold}
-.option.selected .radio-icon::after{content:'';width:10px;height:10px;background:#fff;border-radius:50%}
-.option.other-opt{border-style:dashed}
-.other-input{width:100%;padding:12px;border:2px solid #667eea;border-radius:10px;font-size:15px;margin:-4px 0 10px;font-family:inherit}
-.ranking-item{display:flex;align-items:center;gap:15px;padding:15px;background:#f8f8f8;border-radius:10px;margin-bottom:10px}
-.ranking-item select{padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:16px;background:#fff}
-.ranking-label{flex:1;font-size:15px}
-.final-screen{text-align:center;padding:40px 25px}
-.checkmark{width:80px;height:80px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:50px;animation:scaleIn .5s ease}
-@keyframes scaleIn{from{transform:scale(0)}to{transform:scale(1)}}
-.loader{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hint{font-size:13px;color:#888;font-style:italic;margin-bottom:15px}
-</style>
-</head>
-<body>
-<div class="container" id="app"></div>
-<script>
-const questions=[
-{id:1,section:"Tu negocio",type:"multi",other:true,question:"¿Cuáles son los servicios que ofreces actualmente?",options:["Entrenamiento presencial","Entrenamiento online","Rutinas personalizadas","Seguimiento a clientes","Clases grupales","Asesoría nutricional"]},
-{id:2,section:"Tu negocio",type:"multi",other:true,question:"¿Qué servicio quieres impulsar o hacer crecer principalmente?",options:["Entrenamiento presencial","Entrenamiento online","Rutinas personalizadas","Programas / retos","Clases grupales"]},
-{id:3,section:"Tu negocio",type:"multi",other:true,question:"¿Trabajas con paquetes, programas por semanas/meses o sesiones individuales?",options:["Paquetes","Programas por semanas","Programas por meses","Sesiones individuales"]},
-{id:4,section:"Tu negocio",type:"multi",other:true,question:"¿A qué tipo de cliente quieres llegar principalmente?",options:["Mujeres","Hombres","Ambos","Personas que quieren perder peso","Personas que quieren ganar músculo","Principiantes","Adultos 30-50 años"]},
-{id:5,section:"Página web",type:"multi",other:true,question:"¿Qué te gustaría conseguir con tu nueva página web?",options:["Atraer clientes nuevos","Mostrar mis servicios","Que reserven sesiones","Vender programas online","Mejorar mi imagen / marca","Mostrar testimonios"]},
-{id:6,section:"Página web",type:"multi",other:true,question:"¿Qué quieres que pueda hacer una persona desde la web?",options:["Conocerte y conocer tu método","Ver tus servicios","Ver testimonios/resultados","Solicitar información","Reservar una sesión","Conocer tus programas/rutinas","Acceder a sus rutinas o programas"]},
-{id:7,section:"Página web",type:"multi",other:true,question:"¿Qué material tienes y quieres conservar en la nueva imagen?",options:["Logo","Colores definidos","Fotografías","Videos","Aún no tengo nada"]},
-{id:8,section:"Página web",type:"textarea",question:"¿Hay alguna página web o estilo visual que te guste como referencia?",hint:"Pega aquí el link o describe el estilo que te gusta"},
-{id:9,section:"Rutinas y programas online",type:"multi",other:true,question:"¿Qué tipo de rutinas o programas quieres ofrecer online?",options:["Pérdida de peso","Ganancia muscular","Entrenamiento en casa","Entrenamiento en gym","Postparto / recuperación","Retos / desafíos","Nutrición"]},
-{id:10,section:"Rutinas y programas online",type:"radio",other:true,question:"¿Serán programas iguales para varios clientes, rutinas personalizadas o ambos?",options:["Iguales para varios clientes","Personalizadas por persona","Ambos"]},
-{id:11,section:"Rutinas y programas online",type:"multi",other:true,question:"¿Cómo entregas actualmente las rutinas a tus clientes?",options:["WhatsApp","PDF por email","Google Drive","Impresas / papel","App","No entrego aún"]},
-{id:12,section:"Rutinas y programas online",type:"multi",other:true,question:"¿Qué material incluirá cada programa?",options:["Videos","PDFs","Rutinas escritas","Calendarios","Recomendaciones"]},
-{id:13,section:"Rutinas y programas online",type:"radio",other:true,question:"¿Cuánto tiempo debería tener acceso una persona a cada programa?",options:["30 días","8 semanas","3 meses","Acceso permanente"]},
-{id:14,section:"Rutinas y programas online",type:"yesno",question:"¿Quieres que el acceso a Google Drive sea automático?",hint:"Registrar al cliente, darle acceso, avisarle y retirar el acceso cuando corresponda"},
-{id:15,section:"Rutinas y programas online",type:"yesno",question:"En las rutinas personalizadas, ¿quieres que cada cliente tenga su propia carpeta privada?"},
-{id:16,section:"Citas y sesiones",type:"multi",other:true,question:"¿Qué tipos de citas necesitas manejar?",options:["Presenciales","Virtuales","Evaluación inicial","Seguimiento","Entrenamiento"]},
-{id:17,section:"Citas y sesiones",type:"multi",other:true,question:"¿Cómo coordinas actualmente los horarios con tus clientes?",options:["WhatsApp","Llamadas","Instagram","Google Calendar","Planilla / Excel","Agenda de papel"]},
-{id:18,section:"Citas y sesiones",type:"yesno",question:"¿Quieres que puedan ver tu disponibilidad y reservar solos desde la página web?"},
-{id:19,section:"Citas y sesiones",type:"yesno",question:"¿Quieres recordatorios automáticos antes de cada sesión?"},
-{id:20,section:"Citas y sesiones",type:"radio",other:true,question:"Para sesiones virtuales, ¿qué plataforma prefieres utilizar?",options:["Google Meet","Zoom","WhatsApp"]},
-{id:21,section:"Instagram y redes sociales",type:"multi",other:true,question:"¿Qué redes quieres que manejemos además de Instagram?",options:["Facebook","TikTok","YouTube","LinkedIn","Pinterest","Solo Instagram"]},
-{id:22,section:"Instagram y redes sociales",type:"multi",other:true,question:"¿Qué es lo que más trabajo te da actualmente al crear contenido?",options:["Pensar ideas","Grabar","Editar","Escribir textos","Publicar","Responder mensajes"]},
-{id:23,section:"Instagram y redes sociales",type:"yesno",question:"¿Estarías dispuesta a grabar varios videos en un solo día para que nosotros los transformemos en contenido para toda la semana?"},
-{id:24,section:"Instagram y redes sociales",type:"yesno",question:"¿Quieres que la IA nos ayude con la edición de videos, subtítulos, cortes, ideas, textos y adaptación del contenido a diferentes redes?"},
-{id:25,section:"Instagram y redes sociales",type:"yesno",question:"¿Quieres revisar y aprobar las publicaciones antes de que sean programadas?"},
-{id:26,section:"Instagram y mensajes",type:"multi",other:true,question:"¿Qué preguntas recibes con mayor frecuencia por Instagram?",options:["Precios","Horarios","Cómo funcionan los programas","Resultados / testimonios","Dónde atiendes","Qué incluye cada programa"]},
-{id:27,section:"Instagram y mensajes",type:"yesno",question:"¿Quieres automatizar algunas respuestas y dejar otras para responderlas personalmente?"},
-{id:28,section:"Instagram y mensajes",type:"yesno",question:"¿Te gustaría utilizar palabras clave en Reels y Stories?",hint:"Por ejemplo: Comenta RUTINA y te envío la información"},
-{id:29,section:"Instagram y mensajes",type:"radio",other:true,question:"Cuando alguien muestra interés, ¿quieres llevarlo principalmente a...?",options:["WhatsApp","La página web","Continuar por Instagram"]},
-{id:30,section:"Clientes y seguimiento",type:"multi",other:true,question:"¿Cómo llevas actualmente el control de tus clientes, programas, sesiones y fechas?",options:["Cuaderno / papel","Excel / planillas","Google Calendar","WhatsApp","Apps","En mi cabeza"]},
-{id:31,section:"Clientes y seguimiento",type:"yesno",question:"¿Te gustaría tener un solo lugar donde ver: clientes activos, prospectos, programa de cada cliente, sesiones restantes, fechas y próximos seguimientos?"},
-{id:32,section:"Clientes y seguimiento",type:"yesno",question:"¿Quieres recibir avisos cuando a un cliente le queden pocas sesiones o esté por terminar su programa?"},
-{id:33,section:"Clientes y seguimiento",type:"yesno",question:"¿Quieres automatizar el seguimiento de personas que pidieron información y después dejaron de responder?"},
-{id:34,section:"Clientes y seguimiento",type:"yesno",question:"¿Quieres automatizar la solicitud de testimonios cuando una persona termine un programa?"},
-{id:35,section:"Lo más importante",type:"multi",other:true,question:"¿Cuáles son las 3 tareas que actualmente te quitan más tiempo?",hint:"Marca hasta 3",options:["Crear contenido","Editar videos","Coordinar horarios","Seguimiento de clientes","Enviar rutinas","Responder mensajes","Cobros / pagos","Administración"]},
-{id:36,section:"Lo más importante",type:"multi",other:true,question:"¿Qué cosas prefieres seguir haciendo tú personalmente y NO quieres automatizar?",options:["Entrenar a mis clientes","Crear contenido","Responder mensajes","Seguimiento de clientes","La parte humana / motivación","Nada, quiero automatizar todo"]},
-{id:37,section:"Lo más importante",type:"multi",other:true,question:"Si dentro de 6 meses este sistema funcionara como quieres, ¿qué tendría que haber mejorado?",options:["Más clientes","Menos tiempo administrativo","Procesos ordenados","Más ventas online","Mejor imagen de marca","Clientes más comprometidos"]}
-];
 
-const priorities=["Página web","Conseguir nuevos clientes","Automatizar rutinas/programas y accesos","Automatizar citas y seguimiento","Automatizar creación, edición y publicación de contenido"];
+  <head>
+    <script>
+      window.FontAwesomeConfig = {
+        autoReplaceSvg: 'nest'
+      };
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIVIPREFIT | Tu mejor versión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;family=Poppins:wght@400;500;600&amp;display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme:
+        {
+          extend:
+          {
+            colors:
+            {
+              /* Premium dark system — layered obsidian surfaces */
+              'bg-base': '#080709',
+              /* page base */
+              'bg-elevated': '#131015',
+              /* elevated card surface */
+              'bg-raised': '#1E1A22',
+              /* raised panel layer */
+              'border-line': '#332B36',
+              /* thin metallic rose-gold hairline */
+              'text-primary': '#F7F5F8',
+              /* chalk white */
+              'text-secondary': '#9E95A3',
+              /* muted mauve body copy */
+              'accent-pink': '#FF2E93',
+              /* single vibrant brand accent (active / CTA) */
+            },
+            fontFamily:
+            {
+              sans: ['Poppins', 'sans-serif'],
+              heading: ['Montserrat', 'sans-serif'],
+            },
+            keyframes:
+            {
+              marquee:
+              {
+                '0%':
+                {
+                  transform: 'translateX(0)'
+                },
+                '100%':
+                {
+                  transform: 'translateX(-50%)'
+                },
+              },
+            },
+            animation:
+            {
+              marquee: 'marquee 20s linear infinite',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body
+      {
+        font-family: 'Poppins', sans-serif;
+        background-color: #000;
+      }
 
-let currentScreen=0,answers={},priorityValues={};
-const saved=localStorage.getItem('vivi_quiz_state');
-if(saved){const s=JSON.parse(saved);currentScreen=s.currentScreen;answers=s.answers||{};priorityValues=s.priorityValues||{};}
-function saveState(){localStorage.setItem('vivi_quiz_state',JSON.stringify({currentScreen,answers,priorityValues}));}
+      .font-heading
+      {
+        font-family: 'Montserrat', sans-serif;
+      }
 
-function renderScreen(){
-const app=document.getElementById('app');
-if(currentScreen===0){
-app.innerHTML='<div class="screen active"><h1>Vivi Presson Fit</h1><h2>Cuestionario Inicial</h2><p>Este cuestionario tiene como objetivo conocer cómo trabajas actualmente, qué quieres mejorar y qué partes de tu negocio te gustaría simplificar o automatizar.</p><p>Marca las opciones que apliquen. Si eliges "Otra", podrás escribir el detalle. Tus respuestas se envían automáticamente al finalizar.</p><button class="btn" onclick="nextScreen()">Comenzar</button></div>';
-}else if(currentScreen<=questions.length){
-const q=questions[currentScreen-1];
-const progress=(currentScreen/(questions.length+1))*100;
-let fieldHTML='';
-if(q.type==='textarea'){
-fieldHTML='<textarea id="q'+q.id+'" placeholder="Escribe tu respuesta...">'+(answers[q.id]||'')+'</textarea>';
-}else if(q.type==='multi'){
-fieldHTML='<div class="option-group">';
-const selected=(answers[q.id]||'').split(',').filter(x=>x);
-q.options.forEach(function(opt){
-const isSel=selected.includes(opt);
-fieldHTML+='<div class="option'+(isSel?' selected':'')+'" onclick="toggleMulti('+q.id+',\''+opt.replace(/'/g,"\\'")+'\')"><div class="option-label"><div class="check-icon"></div><span>'+opt+'</span></div></div>';
-});
-if(q.other){
-const selOther=selected.includes('Other');
-fieldHTML+='<div class="option other-opt'+(selOther?' selected':'')+'" onclick="toggleMulti('+q.id+',\'Other\')"><div class="option-label"><div class="check-icon"></div><span>✏️ Otra: escribir detalle</span></div></div>';
-if(selOther){fieldHTML+='<input type="text" class="other-input" id="q'+q.id+'-other" placeholder="Escribe el detalle..." value="'+(answers[q.id+'_other']||'')+'" oninput="setOther('+q.id+',this.value)">';}
-}
-fieldHTML+='</div>';
-}else if(q.type==='radio'){
-fieldHTML='<div class="option-group">';
-q.options.forEach(function(opt){
-const isSel=answers[q.id]===opt;
-fieldHTML+='<div class="option'+(isSel?' selected':'')+'" onclick="selectRadio('+q.id+',\''+opt.replace(/'/g,"\\'")+'\')"><div class="option-label"><div class="radio-icon"></div><span>'+opt+'</span></div></div>';
-});
-if(q.other){
-const selOther=answers[q.id]==='Other';
-fieldHTML+='<div class="option other-opt'+(selOther?' selected':'')+'" onclick="selectRadio('+q.id+',\'Other\')"><div class="option-label"><div class="radio-icon"></div><span>✏️ Otra: escribir detalle</span></div></div>';
-if(selOther){fieldHTML+='<input type="text" class="other-input" id="q'+q.id+'-other" placeholder="Escribe el detalle..." value="'+(answers[q.id+'_other']||'')+'" oninput="setOther('+q.id+',this.value)">';}
-}
-fieldHTML+='</div>';
-}else if(q.type==='yesno'){
-fieldHTML='<div class="option-group"><div class="option'+(answers[q.id]==='Sí'?' selected':'')+'" onclick="selectRadio('+q.id+',\'Sí\')"><div class="option-label"><div class="radio-icon"></div><span>Sí</span></div></div><div class="option'+(answers[q.id]==='No'?' selected':'')+'" onclick="selectRadio('+q.id+',\'No\')"><div class="option-label"><div class="radio-icon"></div><span>No</span></div></div></div>';
-}
-app.innerHTML='<div class="screen active"><div class="section-indicator">Sección: '+q.section+'</div><div class="progress-text">Pregunta '+currentScreen+' de '+questions.length+'</div><div class="progress-bar"><div class="progress-fill" style="width:'+progress+'%"></div></div><h2>'+currentScreen+'. '+q.question+'</h2>'+(q.hint?'<p class="hint">'+q.hint+'</p>':'')+fieldHTML+'<button class="btn" onclick="nextScreen()">Guardar y continuar</button><button class="btn btn-secondary" onclick="prevScreen()">Atrás</button></div>';
-}else if(currentScreen===questions.length+1){
-let rankHTML='';
-priorities.forEach(function(p,i){
-rankHTML+='<div class="ranking-item"><span class="ranking-label">'+p+'</span><select id="rank-'+i+'" onchange="updatePriority('+i+')"><option value="">-</option>'+[1,2,3,4,5].map(function(n){return '<option value="'+n+'"'+(priorityValues[p]==n?' selected':'')+'>'+n+'</option>';}).join('')+'</select></div>';
-});
-app.innerHTML='<div class="screen active"><div class="section-indicator">Prioridades</div><div class="progress-text">Último paso</div><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div><h2>Ordena del 1 al 5 según lo más importante para ti</h2>'+rankHTML+'<button class="btn" onclick="submitQuiz(event)">Enviar respuestas</button><button class="btn btn-secondary" onclick="prevScreen()">Atrás</button></div>';
-}else{
-app.innerHTML='<div class="screen active final-screen"><div class="checkmark">✓</div><h1>¡Gracias!</h1><p>Tus respuestas han sido enviadas correctamente.</p><p>Las analizaré y te contactaré pronto.</p></div>';
-}
-}
+      .nav-link-underline::after
+      {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+      }
 
-function setOther(qId,val){answers[qId+'_other']=val;saveState();}
-function toggleMulti(qId,opt){
-const current=(answers[qId]||'').split(',').filter(x=>x);
-const idx=current.indexOf(opt);
-if(idx>-1){current.splice(idx,1);}else{current.push(opt);}
-answers[qId]=current.join(',');
-saveState();renderScreen();
-}
-function selectRadio(qId,opt){answers[qId]=opt;saveState();renderScreen();}
-function updatePriority(idx){priorityValues[priorities[idx]]=document.getElementById('rank-'+idx).value;saveState();}
+      .nav-link-underline:hover::after
+      {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
 
-function saveCurrent(){
-if(currentScreen>0&&currentScreen<=questions.length){
-const q=questions[currentScreen-1];
-if(q.type==='textarea'){answers[q.id]=document.getElementById('q'+q.id).value;}
-}
-}
-function nextScreen(){saveCurrent();saveState();currentScreen++;renderScreen();}
-function prevScreen(){if(currentScreen>0){saveCurrent();saveState();currentScreen--;renderScreen();}}
+      .card-hover-zoom img
+      {
+        transition: transform 0.5s ease;
+      }
 
-function normalizeAnswers(){
-const out=Object.assign({},answers);
-questions.forEach(function(q){
-if(q.other){
-const otherText=(answers[q.id+'_other']||'').trim();
-let val=answers[q.id]||'';
-if(q.type==='multi'){
-let parts=val.split(',').filter(x=>x);
-parts=parts.map(function(p){return p==='Other'?('Otra: '+(otherText||'sin detalle')):p;});
-out[q.id]=parts.join(', ');
-}else if(q.type==='radio'&&val==='Other'){
-out[q.id]='Otra: '+(otherText||'sin detalle');
-}
-}
-});
-return out;
-}
+      .card-hover-zoom:hover img
+      {
+        transform: scale(1.05);
+      }
 
-async function submitQuiz(ev){
-const btn=ev.target;
-btn.disabled=true;
-btn.innerHTML='<span class="loader"></span> Enviando...';
-const payload={answers:normalizeAnswers(),priorities:priorityValues,timestamp:new Date().toISOString()};
-try{
-const response=await fetch('/.netlify/functions/guardar-respuesta',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-if(response.ok){localStorage.removeItem('vivi_quiz_state');currentScreen=questions.length+2;renderScreen();}
-else{throw new Error('Error al enviar');}
-}catch(err){
-alert('Hubo un problema al enviar. Por favor intenta de nuevo.');
-btn.disabled=false;btn.innerHTML='Enviar respuestas';
-}
-}
-renderScreen();
-</script>
-</body>
+      .faq-answer
+      {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .faq-item.active .faq-answer
+      {
+        max-height: 200px;
+      }
+
+      .faq-item.active .faq-icon i::before
+      {
+        content: "\f068";
+      }
+    </style>
+  </head>
+
+  <body class="bg-bg-base text-text-primary antialiased">
+    <!-- Navigation -->
+    <nav
+      class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl bg-bg-raised/90 backdrop-blur-xl border border-border-line rounded-3xl px-10 py-5 flex justify-between items-center shadow-2xl">
+      <a href="#" class="flex items-center shrink-0"><img
+          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/kxmCS0uETRXhSaxpNduPF6s7FUp1%2Fb0c243d5-c54b-4abc-881b-3fc6783f60a9.png"
+          alt="VIVIPREFIT logo: Large pink cursive 'V' centered over a horizontal pink barbell. A small pink heart "
+          class="h-20 md:h-28 w-auto object-contain"></a>
+      <div
+        class="hidden lg:flex space-x-12 items-center text-lg font-bold uppercase tracking-widest text-text-secondary">
+        <a href="#metodo"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Método</a><a
+          href="#incluido"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Qué
+          incluye</a><a href="#membresias"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Membresías</a><a
+          href="#faq"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">FAQ</a><a
+          href="#unete"
+          class="bg-accent-pink text-bg-base px-10 py-4 rounded-2xl hover:bg-text-primary transition-all shadow-xl shadow-accent-pink/20">Unirme</a>
+      </div><button class="lg:hidden text-text-primary"><i
+          class="fas fa-bars text-3xl"></i></button>
+    </nav><!-- Hero Section -->
+    <header
+      class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-bg-base">
+      <div
+        class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+        <div class="space-y-8"><span
+            class="text-accent-pink font-semibold tracking-[0.2em] uppercase text-xs">SÉ
+            TU MEJOR VERSIÓN</span>
+          <h1
+            class="font-heading text-5xl md:text-7xl font-bold leading-[0.85] tracking-tighter text-text-primary">
+            Vuelve a sentirte fuerte. Entrena a tu ritmo, desde casa o en el
+            gimnasio, con un método pensado para tu vida real.
+          </h1><a href="#unete"
+            class="inline-block border border-accent-pink text-accent-pink px-10 py-4 rounded-full font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme
+            a la Membresía</a>
+        </div>
+        <div class="relative">
+          <div
+            class="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl card-hover-zoom">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_245b9a20f6_398de8d243341492.png"
+              alt="energetic athletic woman mid-workout in a modern gym, dynamic motion, moody high-contrast lighting, "
+              class="w-full h-full object-cover"></div>
+        </div>
+      </div>
+    </header><!-- Marquee -->
+    <div
+      class="py-10 border-y border-border-line bg-bg-base overflow-hidden whitespace-nowrap">
+      <div class="inline-block animate-marquee"><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span>
+      </div>
+    </div><!-- Pain Points Section -->
+    <section class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <h2
+          class="font-heading text-4xl md:text-6xl font-bold mb-16 text-center text-text-primary">
+          Te cuesta mantener la constancia?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bc28bccf7c_da29ba1eac456ea3.png"
+                alt="busy professional woman looking stressed at desk, tired, dim office light, cinematic editorial photo"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">No tienes tiempo para ti y el
+              gimnasio se queda siempre para después.</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_7f72f07492_aeecb637dee2df15.png"
+                alt="woman confused looking at multiple workout apps on phone, frustrated expression, soft natural light,"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">Probaste muchas rutinas pero ninguna
+              se adaptó a tu estilo de vida.</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_ed7ffb0012_f8ff52caad3b5ccc.png"
+                alt="lonely woman exercising alone at home looking unmotivated, muted tones, candid editorial photo"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">Entrenar sola te hace perder
+              motivación y abandonas rápido.</p>
+          </div>
+        </div>
+      </div>
+    </section><!-- VIVIPREFIT Method Section -->
+    <section id="metodo" class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">El
+            Método</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            La fórmula VIVIPREFIT</h2>
+        </div>
+        <div class="grid md:grid-cols-4 gap-4 auto-rows-[200px]">
+          <div
+            class="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bcbde05bb8_c9ad26c2d0ca8065.png"
+              alt="strong woman lifting dumbbells, focused expression, dramatic studio lighting, fitness editorial"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0">
+                <h3 class="font-heading text-2xl font-bold text-white">Fuerza
+                </h3>
+                <p class="text-gray-300">Rutinas de pesas progresivas que
+                  tonifican y fortalecen tu cuerpo de forma segura.</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-1 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_fdacb5134c_68b44f41bb213376.png"
+              alt="healthy colorful balanced meal on wooden table, fresh vegetables and protein, bright food photograph"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Nutrición
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-1 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_b115698d7a_64c18e77375a8338.png"
+              alt="woman checking calendar and planner, organized desk, warm morning light, lifestyle editorial photo"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Constancia
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-2 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_9a713f34f6_8d9c28d711db3684.png"
+              alt="group of women high-fiving after workout in gym, joyful and supportive, candid energetic photo"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Comunidad
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- What's Included Section -->
+    <section id="incluido" class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Todo
+            incluido</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            Qué incluye tu membresía</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-4">
+          <div
+            class="lg:col-span-4 md:col-span-2 row-span-2 relative group overflow-hidden rounded-2xl aspect-square md:aspect-auto">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bef21b89e7_073fa6e2401d2361.png"
+              alt="woman training at home with resistance bands, bright living room, energetic lifestyle photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+              <span
+                class="opacity-0 group-hover:opacity-100 font-bold text-white transition-opacity">Programas
+                para casa y gimnasio</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_82f2dd4f29_5eca420441da2582.png"
+              alt="close up of fitness coach giving instructions, friendly smile, portrait editorial photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Vídeos
+                explicativos</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_29c0acd187_11969ce8258e3463.png"
+              alt="laptop showing live online fitness class, cozy home setup, warm light, lifestyle photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Sesiones
+                en vivo semanales</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_e3477de96c_c3a82011b94422dd.png"
+              alt="healthy meal prep containers neatly arranged, fresh food, top down food photography"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Guías
+                de nutrición</span></div>
+          </div>
+          <div
+            class="lg:col-span-4 md:col-span-2 relative group overflow-hidden rounded-2xl aspect-video">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_10353b9dc1_f02f9a7996c15a3e.png"
+              alt="women chatting and laughing in a supportive fitness community group, candid warm photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+              <span
+                class="opacity-0 group-hover:opacity-100 font-bold text-white transition-opacity">Comunidad
+                activa y motivadora</span></div>
+          </div>
+        </div>
+      </div>
+    </section><!-- About Vivi Section -->
+    <section class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center mb-24">
+          <div class="order-2 md:order-1"><img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_6213b537a2_b543eab95254b596.png"
+              alt="confident female fitness coach smiling at camera, professional studio portrait, natural light, edito"
+              class="w-full rounded-2xl shadow-2xl"></div>
+          <div class="order-1 md:order-2 space-y-6"><span
+              class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Sobre
+              mí</span>
+            <h2
+              class="font-heading text-4xl md:text-5xl font-bold text-text-primary">
+              Hola, soy Vivi, coach de VIVIPREFIT</h2>
+            <p class="text-text-secondary leading-relaxed">Creé este programa
+              porque sé lo difícil que es encontrar una rutina que encaje con
+              una vida real. Mi método combina fuerza, constancia y comunidad
+              para que alcances tus objetivos sin renunciar a nada.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div class="space-y-6"><span
+              class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Mi
+              filosofía</span>
+            <h2
+              class="font-heading text-4xl md:text-5xl font-bold text-text-primary">
+              No se trata de ser perfecta, sino de ser constante</h2>
+            <p class="text-text-secondary leading-relaxed">Cada plan está
+              diseñado para adaptarse a tu nivel y tu horario. Sin dietas
+              restrictivas ni rutinas imposibles. Solo resultados reales y
+              duraderos.</p>
+          </div>
+          <div class="relative"><img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_70b257432e_8f8b56be329a7a06.png"
+              alt="fitness coach demonstrating exercise form in bright gym, side view, professional editorial photo"
+              class="w-full rounded-2xl shadow-2xl">
+            <div
+              class="absolute -bottom-10 -right-10 w-48 aspect-[3/4] rounded-xl overflow-hidden shadow-xl hidden md:block bg-bg-raised">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_d162fe9b92_1aed2a6b3ca78cd1.png"
+                alt="digital fitness planner app on tablet, clean modern UI, product mockup photo"
+                class="w-full h-full object-cover"></div>
+          </div>
+        </div>
+      </div>
+    </section><!-- Pricing Section -->
+    <section id="membresias" class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Planes</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            Elige tu membresía</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="border border-border-line p-8 rounded-3xl hover:-rotate-2 transition-transform bg-bg-elevated">
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Básico</h3>
+            <p class="text-text-secondary text-sm mb-6">Para empezar tu camino
+            </p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 29<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Acceso a
+                rutinas</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Guías
+                básicas</li>
+            </ul><a href="#"
+              class="block w-full py-3 border border-accent-pink text-accent-pink rounded-full text-center font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme</a>
+          </div>
+          <div
+            class="border-2 border-accent-pink p-8 rounded-3xl relative bg-bg-elevated">
+            <span
+              class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent-pink text-bg-base px-4 py-1 rounded-full text-xs font-bold uppercase">Recomendado</span>
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Premium</h3>
+            <p class="text-text-secondary text-sm mb-6">La experiencia completa
+            </p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 49<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Todo del
+                Básico</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Sesiones en
+                vivo</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Soporte
+                prioritario</li>
+            </ul><a href="#"
+              class="block w-full py-3 bg-accent-pink text-bg-base rounded-full text-center font-semibold hover:bg-text-primary hover:text-bg-base transition-all">Unirme</a>
+          </div>
+          <div
+            class="border border-border-line p-8 rounded-3xl hover:rotate-2 transition-transform bg-bg-elevated">
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Anual</h3>
+            <p class="text-text-secondary text-sm mb-6">Ahorra un 20%</p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 39<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Todo del
+                Premium</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Facturación
+                anual</li>
+            </ul><a href="#"
+              class="block w-full py-3 border border-accent-pink text-accent-pink rounded-full text-center font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme</a>
+          </div>
+        </div>
+      </div>
+    </section><!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6 max-w-3xl">
+        <h2
+          class="font-heading text-4xl md:text-5xl font-bold mb-12 text-center text-text-primary">
+          Preguntas frecuentes</h2>
+        <div class="space-y-4">
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Necesito experiencia previa?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">No, los programas están
+                diseñados para todos los niveles, desde principiantes hasta
+                avanzados.</p>
+            </div>
+          </div>
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Qué equipo necesito?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">Solo unas mancuernas y una
+                banda elástica. La mayoría de ejercicios se pueden adaptar.</p>
+            </div>
+          </div>
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Puedo cancelar cuando quiera?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">Sí, puedes cancelar tu
+                suscripción mensual en cualquier momento sin penalización.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- Footer -->
+    <footer id="unete"
+      class="bg-bg-base pt-24 pb-12 border-t border-border-line">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-12 mb-16">
+          <div class="md:col-span-2"><a href="#" class="inline-block mb-6"><img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/kxmCS0uETRXhSaxpNduPF6s7FUp1%2Fb0c243d5-c54b-4abc-881b-3fc6783f60a9.png"
+                alt="VIVIPREFIT logo: Large pink cursive 'V' centered over a horizontal pink barbell. A small pink heart "
+                class="h-24 md:h-32 w-auto object-contain"></a>
+            <p class="mt-6 text-text-secondary max-w-sm">Tu espacio para
+              entrenar, aprender y crecer. Únete hoy y empieza a sentirte
+              fuerte.</p>
+          </div>
+          <div>
+            <h4 class="font-bold mb-6 text-text-primary">Enlaces</h4>
+            <ul class="space-y-3 text-text-secondary">
+              <li><a href="#metodo"
+                  class="hover:text-accent-pink transition-colors">Método</a>
+              </li>
+              <li><a href="#incluido"
+                  class="hover:text-accent-pink transition-colors">Qué
+                  incluye</a></li>
+              <li><a href="#membresias"
+                  class="hover:text-accent-pink transition-colors">Membresías</a>
+              </li>
+              <li><a href="#faq"
+                  class="hover:text-accent-pink transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-6 text-text-primary">Legal</h4>
+            <ul class="space-y-3 text-text-secondary">
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Política de
+                  Privacidad</a></li>
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Términos de
+                  Uso</a></li>
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Contacto</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-border-line">
+          <p class="text-text-secondary text-sm mb-4 md:mb-0">© 2024 VIVIPREFIT.
+            Todos los derechos reservados.</p>
+          <div class="flex space-x-6"><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-instagram text-xl"></i></a><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-tiktok text-xl"></i></a><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-youtube text-xl"></i></a></div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      document.querySelectorAll('.faq-item button').forEach(btn =>
+      {
+        btn.addEventListener('click', () =>
+        {
+          btn.closest('.faq-item').classList.toggle('active');
+        });
+      });
+    </script>
+  </body>
+
 </html>
