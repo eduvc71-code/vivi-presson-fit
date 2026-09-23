@@ -102,11 +102,11 @@
       <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
         <div class="space-y-8">
           <span class="text-accent-pink font-semibold tracking-[0.2em] uppercase text-xs">VIVIFIT CLUB</span>
-          <h1 class="font-heading text-5xl md:text-7xl font-bold leading-[0.9] tracking-tighter text-text-primary">
-            Entrena con propósito. <br>
-            <span class="text-text-secondary">Aprende, transforma y sé constante.</span>
-          </h1>
-          <p class="text-text-secondary text-lg leading-relaxed max-w-lg">
+                    <h1 data-text-key="hero_title" class="font-heading text-5xl md:text-7xl font-bold leading-[0.9] tracking-tighter text-text-primary">
+                        Entrena con propósito. <br>
+                        <span data-text-key="hero_title_sub" class="text-text-secondary">Aprende, transforma y sé constante.</span>
+                    </h1>
+                    <p data-text-key="hero_sub" class="text-text-secondary text-lg leading-relaxed max-w-lg">
             No es solo entrenar. Es entender el <strong>porqué</strong> y el <strong>cómo</strong> de cada movimiento. 
             Únete a la membresía que combina libertad de horarios con educación deportiva real.
           </p>
@@ -143,7 +143,7 @@
       <div class="container mx-auto px-6">
         <div class="text-center mb-16">
           <span class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Estructura Integral</span>
-          <h2 class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">Los 4 Pilares de Vivifit</h2>
+          <h2 data-text-key="pilares_title" class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">Los 4 Pilares de Vivifit</h2>
         </div>
         
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -209,7 +209,7 @@
       <div class="container mx-auto px-6">
         <div class="text-center mb-16">
           <span class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Planes</span>
-          <h2 class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">Elige tu camino</h2>
+          <h2 data-text-key="membresias_title" class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">Elige tu camino</h2>
         </div>
         
         <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -624,8 +624,8 @@
                 if(isAdmin) document.getElementById('adminBtnNav').classList.remove('hidden');
                 // exponer flag global para edición inline
                 window.isAdmin = isAdmin;
-                // activar editor de imágenes si corresponde
-                try { enableImageEditing(); } catch(e) { console.warn('enableImageEditing error', e); }
+                // activar editor de imágenes y texto si corresponde
+                try { enableImageEditing(); enableTextEditing(); } catch(e) { console.warn('enableImageEditing/enableTextEditing error', e); }
 
                 if(profile) {
                     const statusEl = document.getElementById('dashStatus');
@@ -720,6 +720,31 @@
             }
         }
         loadDynamicTexts();
+        
+        // Cargar configuraciones de texto guardadas (text:<key>)
+        async function loadTextConfigs() {
+            try {
+                const keys = ['text:hero_title','text:hero_title_sub','text:hero_sub','text:pilares_title','text:membresias_title'];
+                const { data } = await supabase.from('landing_config').select('key,value').in('key', keys);
+                if(data && data.length) {
+                    data.forEach(item => {
+                        const key = item.key.replace('text:', '');
+                        const val = item.value || {};
+                        const el = document.querySelector(`[data-text-key="${key}"]`);
+                        if(el) {
+                            if(val.text) el.innerHTML = val.text;
+                            const style = {};
+                            if(val.fontFamily) el.style.fontFamily = val.fontFamily;
+                            if(val.fontSize) el.style.fontSize = val.fontSize;
+                            if(val.color) el.style.color = val.color;
+                            if(val.fontWeight) el.style.fontWeight = val.fontWeight;
+                            if(val.fontStyle) el.style.fontStyle = val.fontStyle;
+                        }
+                    });
+                }
+            } catch(e) { console.warn('loadTextConfigs error', e); }
+        }
+        loadTextConfigs();
         
         // --- EDITOR INLINE DE IMÁGENES (admin) ---
         function createHiddenFileInput() {
@@ -885,6 +910,135 @@
                 }
             }
         }, true);
+
+        // --- EDITOR INLINE DE TEXTO (admin) ---
+        function createTextToolbar() {
+            if(document.getElementById('__text_edit_toolbar')) return document.getElementById('__text_edit_toolbar');
+            const t = document.createElement('div');
+            t.id = '__text_edit_toolbar';
+            t.style.position = 'absolute';
+            t.style.zIndex = 99999;
+            t.style.minWidth = '260px';
+            t.style.background = '#0f0c10';
+            t.style.border = '1px solid #2b2630';
+            t.style.padding = '10px';
+            t.style.borderRadius = '10px';
+            t.style.boxShadow = '0 6px 24px rgba(0,0,0,0.6)';
+            t.style.color = '#fff';
+            t.innerHTML = `
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                    <input id="__text_edit_input" style="flex:1;padding:6px;border-radius:6px;background:#0b0a0c;border:1px solid #332b36;color:#fff"/>
+                </div>
+                <div style="display:flex;gap:6px;margin-bottom:8px;align-items:center;">
+                    <select id="__text_font" style="flex:1;padding:6px;border-radius:6px;background:#0b0a0c;border:1px solid #332b36;color:#fff">
+                        <option value="">(Fuente)</option>
+                        <option value="Poppins, sans-serif">Poppins</option>
+                        <option value="Montserrat, sans-serif">Montserrat</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                    </select>
+                    <input id="__text_size" type="number" placeholder="px" style="width:70px;padding:6px;border-radius:6px;background:#0b0a0c;border:1px solid #332b36;color:#fff"/>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+                    <input id="__text_color" type="color" style="width:44px;height:34px;padding:0;border-radius:6px;border:1px solid #332b36;background:#fff" />
+                    <button id="__text_bold" title="Bold" style="padding:6px;border-radius:6px;background:#161218;border:1px solid #332b36;color:#fff">B</button>
+                    <button id="__text_italic" title="Italic" style="padding:6px;border-radius:6px;background:#161218;border:1px solid #332b36;color:#fff">i</button>
+                    <div style="flex:1"></div>
+                    <button id="__text_save" style="background:#0ea5a0;padding:6px;border-radius:6px;border:none;color:#071013">Guardar</button>
+                    <button id="__text_cancel" style="background:#2b2630;padding:6px;border-radius:6px;border:none;color:#fff">Cancelar</button>
+                </div>
+            `;
+            document.body.appendChild(t);
+
+            // handlers
+            t.querySelector('#__text_cancel').addEventListener('click', () => {
+                t.style.display = 'none';
+            });
+
+            t.querySelector('#__text_save').addEventListener('click', async () => {
+                const key = t.dataset.currentKey;
+                const target = t._target;
+                if(!key || !target) return alert('No hay objetivo para guardar');
+                const text = document.getElementById('__text_edit_input').value;
+                const font = document.getElementById('__text_font').value;
+                const size = document.getElementById('__text_size').value;
+                const color = document.getElementById('__text_color').value;
+                const bold = document.getElementById('__text_bold').classList.contains('active');
+                const italic = document.getElementById('__text_italic').classList.contains('active');
+
+                // aplicar cambios en DOM
+                target.innerHTML = text;
+                if(font) target.style.fontFamily = font; else target.style.fontFamily = '';
+                if(size) target.style.fontSize = size + 'px'; else target.style.fontSize = '';
+                if(color) target.style.color = color; else target.style.color = '';
+                target.style.fontWeight = bold ? '700' : '';
+                target.style.fontStyle = italic ? 'italic' : '';
+
+                // guardar en Supabase
+                try {
+                    await supabase.from('landing_config').upsert({ key: `text:${key}`, value: { text, fontFamily: font || null, fontSize: size ? size + 'px' : null, color: color || null, fontWeight: bold ? '700' : null, fontStyle: italic ? 'italic' : null } });
+                    alert('Texto guardado');
+                } catch(e) {
+                    console.error('save text error', e);
+                    alert('Error guardando texto: ' + (e.message || JSON.stringify(e)));
+                }
+                t.style.display = 'none';
+                delete t.dataset.currentKey;
+                delete t._target;
+            });
+
+            // toggle bold/italic UI
+            t.querySelector('#__text_bold').addEventListener('click', function(){ this.classList.toggle('active'); this.style.background = this.classList.contains('active') ? '#0ea5a0' : '#161218'; });
+            t.querySelector('#__text_italic').addEventListener('click', function(){ this.classList.toggle('active'); this.style.background = this.classList.contains('active') ? '#0ea5a0' : '#161218'; });
+
+            return t;
+        }
+
+        function openTextEditorFor(el) {
+            const key = el.dataset.textKey;
+            if(!key) return;
+            const toolbar = createTextToolbar();
+            toolbar.dataset.currentKey = key;
+            toolbar._target = el;
+            const rect = el.getBoundingClientRect();
+            toolbar.style.top = (window.scrollY + rect.top - toolbar.offsetHeight - 12) + 'px';
+            toolbar.style.left = Math.max(12, rect.left) + 'px';
+            // populate
+            const txt = el.innerText || el.textContent || '';
+            document.getElementById('__text_edit_input').value = txt.trim();
+            const comp = window.getComputedStyle(el);
+            document.getElementById('__text_font').value = comp.fontFamily || '';
+            const fSize = parseInt(comp.fontSize || '', 10) || '';
+            document.getElementById('__text_size').value = fSize;
+            document.getElementById('__text_color').value = rgbToHex(comp.color || '#ffffff');
+            const boldBtn = document.getElementById('__text_bold');
+            const italicBtn = document.getElementById('__text_italic');
+            boldBtn.classList.toggle('active', (comp.fontWeight==='700' || parseInt(comp.fontWeight)>=700));
+            boldBtn.style.background = boldBtn.classList.contains('active') ? '#0ea5a0' : '#161218';
+            italicBtn.classList.toggle('active', comp.fontStyle === 'italic');
+            italicBtn.style.background = italicBtn.classList.contains('active') ? '#0ea5a0' : '#161218';
+            toolbar.style.display = 'block';
+        }
+
+        function enableTextEditing() {
+            if(!window.isAdmin) return;
+            const elems = document.querySelectorAll('[data-text-key]');
+            elems.forEach(el => {
+                el.style.cursor = 'text';
+                el.title = el.title || 'Click para editar texto (admin)';
+                // avoid attaching multiple listeners
+                if(el._textEditAttached) return;
+                el.addEventListener('click', (e) => { e.stopPropagation(); openTextEditorFor(el); });
+                el._textEditAttached = true;
+            });
+        }
+
+        function rgbToHex(rgb) {
+            try {
+                const m = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+                if(!m) return '#ffffff';
+                return '#' + [1,2,3].map(i=>parseInt(m[i]).toString(16).padStart(2,'0')).join('');
+            } catch(e) { return '#ffffff'; }
+        }
     </script>
 </body>
 </html>
