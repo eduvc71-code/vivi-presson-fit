@@ -858,6 +858,7 @@
                     if(next) {
                         document.getElementById('adminBtnNav')?.classList.remove('hidden');
                         enableImageEditing();
+                        try { enableTextEditing(); } catch(e) { console.warn('enableTextEditing error', e); }
                     }
                     btn.innerText = next ? 'Admin: ON' : 'Admin: OFF';
                 });
@@ -867,6 +868,7 @@
                     window.isAdmin = true;
                     document.getElementById('adminBtnNav')?.classList.remove('hidden');
                     enableImageEditing();
+                    try { enableTextEditing(); } catch(e) { console.warn('enableTextEditing error', e); }
                     btn.innerText = 'Admin: ON';
                 }
             } catch(e) { console.warn('createLocalAdminToggle error', e); }
