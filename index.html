@@ -806,6 +806,51 @@
                 });
             });
         }
+
+        // Dev helper: botón local para activar modo admin (solo en localhost)
+        function createLocalAdminToggle() {
+            try {
+                const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '';
+                if(!isLocal) return;
+                if(document.getElementById('devAdminToggle')) return;
+                const btn = document.createElement('button');
+                btn.id = 'devAdminToggle';
+                btn.innerText = localStorage.getItem('devAdmin') === '1' ? 'Admin: ON' : 'Admin: OFF';
+                btn.style.position = 'fixed';
+                btn.style.right = '12px';
+                btn.style.bottom = '12px';
+                btn.style.zIndex = 9999;
+                btn.style.padding = '8px 10px';
+                btn.style.borderRadius = '8px';
+                btn.style.background = '#ff2d55';
+                btn.style.color = '#fff';
+                btn.style.border = 'none';
+                btn.style.cursor = 'pointer';
+                btn.title = 'Toggle admin mode (local only)';
+                btn.addEventListener('click', () => {
+                    const cur = localStorage.getItem('devAdmin') === '1';
+                    const next = !cur;
+                    localStorage.setItem('devAdmin', next ? '1' : '0');
+                    window.isAdmin = next;
+                    if(next) {
+                        document.getElementById('adminBtnNav')?.classList.remove('hidden');
+                        enableImageEditing();
+                    }
+                    btn.innerText = next ? 'Admin: ON' : 'Admin: OFF';
+                });
+                document.body.appendChild(btn);
+                // restore state
+                if(localStorage.getItem('devAdmin') === '1') {
+                    window.isAdmin = true;
+                    document.getElementById('adminBtnNav')?.classList.remove('hidden');
+                    enableImageEditing();
+                    btn.innerText = 'Admin: ON';
+                }
+            } catch(e) { console.warn('createLocalAdminToggle error', e); }
+        }
+
+        // Crear toggle local al final de la inicialización
+        setTimeout(() => createLocalAdminToggle(), 500);
     </script>
 </body>
 </html>
