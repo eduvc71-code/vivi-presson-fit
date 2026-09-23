@@ -991,6 +991,9 @@
                             alert('Advertencia: el contenido no coincide con lo guardado en el servidor.');
                         } else {
                             alert('Texto guardado correctamente y verificado en servidor');
+                            // recargar configuraciones y refrescar la página para garantizar consistencia
+                            try { loadTextConfigs(); } catch(e) { console.warn('loadTextConfigs after save failed', e); }
+                            setTimeout(()=>{ window.location.reload(); }, 700);
                         }
                     }
                 } catch(e) {
