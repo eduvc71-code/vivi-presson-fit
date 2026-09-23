@@ -851,6 +851,40 @@
 
         // Crear toggle local al final de la inicialización
         setTimeout(() => createLocalAdminToggle(), 500);
+
+        // Cuando el toggle devAdmin está activo, permitir navegar a secciones ancla
+        // incluso si no hay sesión iniciada (útil para pruebas locales)
+        document.addEventListener('click', (e) => {
+            if(!window.isAdmin) return;
+            const el = e.target.closest('a, button, [onclick]');
+            if(!el) return;
+
+            // Links con href ancla
+            if(el.tagName === 'A' && el.getAttribute('href') && el.getAttribute('href').startsWith('#')) {
+                const targetId = el.getAttribute('href').slice(1);
+                const target = document.getElementById(targetId);
+                if(target) {
+                    e.preventDefault();
+                    // mostrar sección si estaba oculta
+                    target.classList.remove('hidden-section');
+                    // también asegurarse de que header/footer no estén ocultos
+                    document.querySelectorAll('header, footer, #pilares, #educativo, #membresias, #faq').forEach(n=>n.classList.remove('hidden-section'));
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            // Botones u otros elementos que disparan modal de auth: openAuthModal('register'|'login')
+            const onclick = el.getAttribute && el.getAttribute('onclick');
+            if(onclick && /openAuthModal\(['"]?(register|login)['"]?\)/.test(onclick)) {
+                // evitar que aparezca el modal en modo devAdmin; en su lugar navegar a membresias
+                e.preventDefault();
+                const target = document.getElementById('membresias');
+                if(target) {
+                    document.querySelectorAll('header, footer, #pilares, #educativo, #membresias, #faq').forEach(n=>n.classList.remove('hidden-section'));
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }, true);
     </script>
 </body>
 </html>
