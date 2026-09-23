@@ -460,6 +460,34 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // Exponer cliente para debugging desde la consola (ej: await supabase.auth.getUser())
         window.supabase = supabase;
+
+        // Fallback: si por algún motivo el cliente ESM no queda expuesto, cargar UMD
+        async function ensureSupabaseFallback() {
+            if (typeof window.supabase !== 'undefined' && window.supabase) return;
+            try {
+                await new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.min.js';
+                    s.onload = resolve;
+                    s.onerror = () => reject(new Error('Failed loading supabase UMD'));
+                    document.head.appendChild(s);
+                });
+
+                // Try several possible globals that the UMD may expose
+                const lib = window.supabase || window.Supabase || window.supabaseJs || window.supabase_client || window.supabaseClient;
+                if (lib && typeof lib.createClient === 'function') {
+                    // If lib is the module factory, create a client instance
+                    window.supabase = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                } else if (window.supabase && typeof window.supabase.createClient === 'function') {
+                    window.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                }
+                console.log('ensureSupabaseFallback: supabase ready', !!window.supabase);
+            } catch (err) {
+                console.warn('ensureSupabaseFallback failed', err);
+            }
+        }
+        // attempt fallback after small delay
+        setTimeout(() => ensureSupabaseFallback(), 300);
         let isLoginMode = false;
         let currentUser = null;
 
