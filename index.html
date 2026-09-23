@@ -570,9 +570,12 @@
             if(user) {
                 document.getElementById('loginBtnNav').classList.add('hidden');
                 document.getElementById('logoutBtnNav').classList.remove('hidden');
-                
+
                 // Mostrar Dashboard
-                document.querySelectorAll('header, #pilares, #educativo, #membresias, #faq, footer').forEach(el => el.classList.add('hidden-section'));
+                // Si es admin, NO ocultar la landing: mostrar tanto landing como dashboard
+                if (!window.isAdmin) {
+                    document.querySelectorAll('header, #pilares, #educativo, #membresias, #faq, footer').forEach(el => el.classList.add('hidden-section'));
+                }
                 document.getElementById('userDashboard').classList.remove('hidden-section');
                 document.getElementById('dashUserName').innerText = user.email.split('@')[0];
 
