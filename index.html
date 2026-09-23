@@ -948,6 +948,9 @@
                 </div>
             `;
             document.body.appendChild(t);
+            // evitar que clicks dentro del toolbar activen handlers globales de edición
+            t.addEventListener('click', (e) => { e.stopPropagation(); });
+            t.dataset.noEditable = '1';
 
             // handlers
             t.querySelector('#__text_cancel').addEventListener('click', () => {
@@ -1050,8 +1053,8 @@
             nodes.forEach((el) => {
                 // skip empty or purely decorative elements
                 if(!el || !el.textContent || el.textContent.trim().length < 2) return;
-                // skip if element is within admin panel or nav
-                if(el.closest('#adminPanel') || el.closest('nav') || el.closest('.admin-panel')) return;
+                // skip if element is within admin panel, nav, the editor toolbar or dev toggle
+                if(el.closest('#adminPanel') || el.closest('nav') || el.closest('.admin-panel') || el.closest('#__text_edit_toolbar') || el.closest('#devAdminToggle')) return;
                 // skip interactive controls
                 if(el.tagName === 'A' || el.tagName === 'BUTTON' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') return;
 
