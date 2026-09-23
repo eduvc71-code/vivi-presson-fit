@@ -721,11 +721,10 @@
         }
         loadDynamicTexts();
         
-        // Cargar configuraciones de texto guardadas (text:<key>)
+        // Cargar configuraciones de texto guardadas (keys que empiezan por `text:`)
         async function loadTextConfigs() {
             try {
-                const keys = ['text:hero_title','text:hero_title_sub','text:hero_sub','text:pilares_title','text:membresias_title'];
-                const { data } = await supabase.from('landing_config').select('key,value').in('key', keys);
+                const { data } = await supabase.from('landing_config').select('key,value').ilike('key', 'text:%');
                 if(data && data.length) {
                     data.forEach(item => {
                         const key = item.key.replace('text:', '');
@@ -733,7 +732,6 @@
                         const el = document.querySelector(`[data-text-key="${key}"]`);
                         if(el) {
                             if(val.text) el.innerHTML = val.text;
-                            const style = {};
                             if(val.fontFamily) el.style.fontFamily = val.fontFamily;
                             if(val.fontSize) el.style.fontSize = val.fontSize;
                             if(val.color) el.style.color = val.color;
@@ -1021,11 +1019,31 @@
 
         function enableTextEditing() {
             if(!window.isAdmin) return;
-            const elems = document.querySelectorAll('[data-text-key]');
-            elems.forEach(el => {
+            // base selectors to offer inline editing
+            const selectors = 'h1,h2,h3,h4,h5,p,span,li,div';
+            // avoid giving editability to structural elements inside admin panel / nav / buttons / inputs
+            const blacklist = ['#adminPanel', 'nav', 'button', 'input', 'textarea', 'select', '.admin-panel'];
+            if(!window.__text_auto_counter) window.__text_auto_counter = 1;
+
+            const nodes = Array.from(document.querySelectorAll(selectors));
+            nodes.forEach((el) => {
+                // skip empty or purely decorative elements
+                if(!el || !el.textContent || el.textContent.trim().length < 2) return;
+                // skip if element is within admin panel or nav
+                if(el.closest('#adminPanel') || el.closest('nav') || el.closest('.admin-panel')) return;
+                // skip interactive controls
+                if(el.tagName === 'A' || el.tagName === 'BUTTON' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') return;
+
+                // assign data-text-key if missing
+                if(!el.dataset.textKey) {
+                    const gen = `auto_${el.tagName.toLowerCase()}_${window.__text_auto_counter++}`;
+                    el.dataset.textKey = gen;
+                }
+
+                // visual affordance
                 el.style.cursor = 'text';
                 el.title = el.title || 'Click para editar texto (admin)';
-                // avoid attaching multiple listeners
+
                 if(el._textEditAttached) return;
                 el.addEventListener('click', (e) => { e.stopPropagation(); openTextEditorFor(el); });
                 el._textEditAttached = true;
