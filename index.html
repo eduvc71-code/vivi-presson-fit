@@ -965,7 +965,7 @@
                 const bold = document.getElementById('__text_bold').classList.contains('active');
                 const italic = document.getElementById('__text_italic').classList.contains('active');
 
-                // aplicar cambios en DOM
+                // aplicar cambios en DOM inmediatamente
                 target.innerHTML = text;
                 if(font) target.style.fontFamily = font; else target.style.fontFamily = '';
                 if(size) target.style.fontSize = size + 'px'; else target.style.fontSize = '';
@@ -973,10 +973,26 @@
                 target.style.fontWeight = bold ? '700' : '';
                 target.style.fontStyle = italic ? 'italic' : '';
 
-                // guardar en Supabase
+                // guardar en Supabase y verificar
                 try {
-                    await supabase.from('landing_config').upsert({ key: `text:${key}`, value: { text, fontFamily: font || null, fontSize: size ? size + 'px' : null, color: color || null, fontWeight: bold ? '700' : null, fontStyle: italic ? 'italic' : null } });
-                    alert('Texto guardado');
+                    const payload = { text, fontFamily: font || null, fontSize: size ? size + 'px' : null, color: color || null, fontWeight: bold ? '700' : null, fontStyle: italic ? 'italic' : null };
+                    const up = await supabase.from('landing_config').upsert({ key: `text:${key}`, value: payload });
+                    if(up.error) throw up.error;
+
+                    // verificar leyendo de vuelta
+                    const verify = await supabase.from('landing_config').select('value').eq('key', `text:${key}`).single();
+                    if(verify.error || !verify.data) {
+                        console.warn('verify failed', verify.error);
+                        alert('Advertencia: no se pudo verificar persistencia en el servidor. Revisa permisos.');
+                    } else {
+                        const saved = verify.data.value || {};
+                        if(String(saved.text || '') !== String(text || '')) {
+                            console.warn('persist mismatch', saved, text);
+                            alert('Advertencia: el contenido no coincide con lo guardado en el servidor.');
+                        } else {
+                            alert('Texto guardado correctamente y verificado en servidor');
+                        }
+                    }
                 } catch(e) {
                     console.error('save text error', e);
                     alert('Error guardando texto: ' + (e.message || JSON.stringify(e)));
