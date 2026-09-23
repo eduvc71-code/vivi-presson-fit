@@ -1,0 +1,598 @@
+<html lang="es">
+
+  <head>
+    <script>
+      window.FontAwesomeConfig = {
+        autoReplaceSvg: 'nest'
+      };
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIVIPREFIT | Tu mejor versión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&amp;family=Poppins:wght@400;500;600&amp;display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+      tailwind.config = {
+        theme:
+        {
+          extend:
+          {
+            colors:
+            {
+              /* Premium dark system — layered obsidian surfaces */
+              'bg-base': '#080709',
+              /* page base */
+              'bg-elevated': '#131015',
+              /* elevated card surface */
+              'bg-raised': '#1E1A22',
+              /* raised panel layer */
+              'border-line': '#332B36',
+              /* thin metallic rose-gold hairline */
+              'text-primary': '#F7F5F8',
+              /* chalk white */
+              'text-secondary': '#9E95A3',
+              /* muted mauve body copy */
+              'accent-pink': '#FF2E93',
+              /* single vibrant brand accent (active / CTA) */
+            },
+            fontFamily:
+            {
+              sans: ['Poppins', 'sans-serif'],
+              heading: ['Montserrat', 'sans-serif'],
+            },
+            keyframes:
+            {
+              marquee:
+              {
+                '0%':
+                {
+                  transform: 'translateX(0)'
+                },
+                '100%':
+                {
+                  transform: 'translateX(-50%)'
+                },
+              },
+            },
+            animation:
+            {
+              marquee: 'marquee 20s linear infinite',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body
+      {
+        font-family: 'Poppins', sans-serif;
+        background-color: #000;
+      }
+
+      .font-heading
+      {
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      .nav-link-underline::after
+      {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+      }
+
+      .nav-link-underline:hover::after
+      {
+        transform: scaleX(1);
+        transform-origin: left;
+      }
+
+      .card-hover-zoom img
+      {
+        transition: transform 0.5s ease;
+      }
+
+      .card-hover-zoom:hover img
+      {
+        transform: scale(1.05);
+      }
+
+      .faq-answer
+      {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .faq-item.active .faq-answer
+      {
+        max-height: 200px;
+      }
+
+      .faq-item.active .faq-icon i::before
+      {
+        content: "\f068";
+      }
+    </style>
+  </head>
+
+  <body class="bg-bg-base text-text-primary antialiased">
+    <!-- Navigation -->
+    <nav
+      class="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl bg-bg-raised/90 backdrop-blur-xl border border-border-line rounded-3xl px-10 py-5 flex justify-between items-center shadow-2xl">
+      <a href="#" class="flex items-center shrink-0"><img
+          src="https://storage.googleapis.com/uxpilot-auth.appspot.com/kxmCS0uETRXhSaxpNduPF6s7FUp1%2Fb0c243d5-c54b-4abc-881b-3fc6783f60a9.png"
+          alt="VIVIPREFIT logo: Large pink cursive 'V' centered over a horizontal pink barbell. A small pink heart "
+          class="h-20 md:h-28 w-auto object-contain"></a>
+      <div
+        class="hidden lg:flex space-x-12 items-center text-lg font-bold uppercase tracking-widest text-text-secondary">
+        <a href="#metodo"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Método</a><a
+          href="#incluido"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Qué
+          incluye</a><a href="#membresias"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">Membresías</a><a
+          href="#faq"
+          class="relative nav-link-underline hover:text-text-primary transition-colors">FAQ</a><a
+          href="#unete"
+          class="bg-accent-pink text-bg-base px-10 py-4 rounded-2xl hover:bg-text-primary transition-all shadow-xl shadow-accent-pink/20">Unirme</a>
+      </div><button class="lg:hidden text-text-primary"><i
+          class="fas fa-bars text-3xl"></i></button>
+    </nav><!-- Hero Section -->
+    <header
+      class="relative min-h-screen flex items-center pt-20 overflow-hidden bg-bg-base">
+      <div
+        class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center relative z-10">
+        <div class="space-y-8"><span
+            class="text-accent-pink font-semibold tracking-[0.2em] uppercase text-xs">SÉ
+            TU MEJOR VERSIÓN</span>
+          <h1
+            class="font-heading text-5xl md:text-7xl font-bold leading-[0.85] tracking-tighter text-text-primary">
+            Vuelve a sentirte fuerte. Entrena a tu ritmo, desde casa o en el
+            gimnasio, con un método pensado para tu vida real.
+          </h1><a href="#unete"
+            class="inline-block border border-accent-pink text-accent-pink px-10 py-4 rounded-full font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme
+            a la Membresía</a>
+        </div>
+        <div class="relative">
+          <div
+            class="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl card-hover-zoom">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_245b9a20f6_398de8d243341492.png"
+              alt="energetic athletic woman mid-workout in a modern gym, dynamic motion, moody high-contrast lighting, "
+              class="w-full h-full object-cover"></div>
+        </div>
+      </div>
+    </header><!-- Marquee -->
+    <div
+      class="py-10 border-y border-border-line bg-bg-base overflow-hidden whitespace-nowrap">
+      <div class="inline-block animate-marquee"><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span><span
+          class="font-heading text-4xl font-bold opacity-20 mx-10 text-text-primary">VIVIPREFIT</span>
+      </div>
+    </div><!-- Pain Points Section -->
+    <section class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <h2
+          class="font-heading text-4xl md:text-6xl font-bold mb-16 text-center text-text-primary">
+          Te cuesta mantener la constancia?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bc28bccf7c_da29ba1eac456ea3.png"
+                alt="busy professional woman looking stressed at desk, tired, dim office light, cinematic editorial photo"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">No tienes tiempo para ti y el
+              gimnasio se queda siempre para después.</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_7f72f07492_aeecb637dee2df15.png"
+                alt="woman confused looking at multiple workout apps on phone, frustrated expression, soft natural light,"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">Probaste muchas rutinas pero ninguna
+              se adaptó a tu estilo de vida.</p>
+          </div>
+          <div class="space-y-4">
+            <div
+              class="rounded-jumbo overflow-hidden aspect-[3/4] shadow-lg bg-bg-elevated">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_ed7ffb0012_f8ff52caad3b5ccc.png"
+                alt="lonely woman exercising alone at home looking unmotivated, muted tones, candid editorial photo"
+                class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">
+            </div>
+            <p class="text-text-secondary">Entrenar sola te hace perder
+              motivación y abandonas rápido.</p>
+          </div>
+        </div>
+      </div>
+    </section><!-- VIVIPREFIT Method Section -->
+    <section id="metodo" class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">El
+            Método</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            La fórmula VIVIPREFIT</h2>
+        </div>
+        <div class="grid md:grid-cols-4 gap-4 auto-rows-[200px]">
+          <div
+            class="md:col-span-2 md:row-span-2 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bcbde05bb8_c9ad26c2d0ca8065.png"
+              alt="strong woman lifting dumbbells, focused expression, dramatic studio lighting, fitness editorial"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-6">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-4 group-hover:translate-y-0">
+                <h3 class="font-heading text-2xl font-bold text-white">Fuerza
+                </h3>
+                <p class="text-gray-300">Rutinas de pesas progresivas que
+                  tonifican y fortalecen tu cuerpo de forma segura.</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-1 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_fdacb5134c_68b44f41bb213376.png"
+              alt="healthy colorful balanced meal on wooden table, fresh vegetables and protein, bright food photograph"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Nutrición
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-1 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_b115698d7a_64c18e77375a8338.png"
+              alt="woman checking calendar and planner, organized desk, warm morning light, lifestyle editorial photo"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Constancia
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div
+            class="md:col-span-2 relative group overflow-hidden rounded-2xl bg-bg-raised">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_9a713f34f6_8d9c28d711db3684.png"
+              alt="group of women high-fiving after workout in gym, joyful and supportive, candid energetic photo"
+              class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+              <div
+                class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <h3 class="font-heading text-xl font-bold text-white">Comunidad
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- What's Included Section -->
+    <section id="incluido" class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Todo
+            incluido</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            Qué incluye tu membresía</h2>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-4">
+          <div
+            class="lg:col-span-4 md:col-span-2 row-span-2 relative group overflow-hidden rounded-2xl aspect-square md:aspect-auto">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_bef21b89e7_073fa6e2401d2361.png"
+              alt="woman training at home with resistance bands, bright living room, energetic lifestyle photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+              <span
+                class="opacity-0 group-hover:opacity-100 font-bold text-white transition-opacity">Programas
+                para casa y gimnasio</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_82f2dd4f29_5eca420441da2582.png"
+              alt="close up of fitness coach giving instructions, friendly smile, portrait editorial photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Vídeos
+                explicativos</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_29c0acd187_11969ce8258e3463.png"
+              alt="laptop showing live online fitness class, cozy home setup, warm light, lifestyle photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Sesiones
+                en vivo semanales</span></div>
+          </div>
+          <div
+            class="lg:col-span-2 md:col-span-1 relative group overflow-hidden rounded-2xl aspect-[3/4]">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_e3477de96c_c3a82011b94422dd.png"
+              alt="healthy meal prep containers neatly arranged, fresh food, top down food photography"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center p-2">
+              <span
+                class="opacity-0 group-hover:opacity-100 text-xs font-bold text-white transition-opacity text-center">Guías
+                de nutrición</span></div>
+          </div>
+          <div
+            class="lg:col-span-4 md:col-span-2 relative group overflow-hidden rounded-2xl aspect-video">
+            <img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_10353b9dc1_f02f9a7996c15a3e.png"
+              alt="women chatting and laughing in a supportive fitness community group, candid warm photo"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+            <div
+              class="absolute inset-0 bg-black/40 group-hover:bg-black/60 transition-colors flex items-center justify-center">
+              <span
+                class="opacity-0 group-hover:opacity-100 font-bold text-white transition-opacity">Comunidad
+                activa y motivadora</span></div>
+          </div>
+        </div>
+      </div>
+    </section><!-- About Vivi Section -->
+    <section class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-12 items-center mb-24">
+          <div class="order-2 md:order-1"><img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_6213b537a2_b543eab95254b596.png"
+              alt="confident female fitness coach smiling at camera, professional studio portrait, natural light, edito"
+              class="w-full rounded-2xl shadow-2xl"></div>
+          <div class="order-1 md:order-2 space-y-6"><span
+              class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Sobre
+              mí</span>
+            <h2
+              class="font-heading text-4xl md:text-5xl font-bold text-text-primary">
+              Hola, soy Vivi, coach de VIVIPREFIT</h2>
+            <p class="text-text-secondary leading-relaxed">Creé este programa
+              porque sé lo difícil que es encontrar una rutina que encaje con
+              una vida real. Mi método combina fuerza, constancia y comunidad
+              para que alcances tus objetivos sin renunciar a nada.</p>
+          </div>
+        </div>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+          <div class="space-y-6"><span
+              class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Mi
+              filosofía</span>
+            <h2
+              class="font-heading text-4xl md:text-5xl font-bold text-text-primary">
+              No se trata de ser perfecta, sino de ser constante</h2>
+            <p class="text-text-secondary leading-relaxed">Cada plan está
+              diseñado para adaptarse a tu nivel y tu horario. Sin dietas
+              restrictivas ni rutinas imposibles. Solo resultados reales y
+              duraderos.</p>
+          </div>
+          <div class="relative"><img
+              src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_70b257432e_8f8b56be329a7a06.png"
+              alt="fitness coach demonstrating exercise form in bright gym, side view, professional editorial photo"
+              class="w-full rounded-2xl shadow-2xl">
+            <div
+              class="absolute -bottom-10 -right-10 w-48 aspect-[3/4] rounded-xl overflow-hidden shadow-xl hidden md:block bg-bg-raised">
+              <img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/gen_d162fe9b92_1aed2a6b3ca78cd1.png"
+                alt="digital fitness planner app on tablet, clean modern UI, product mockup photo"
+                class="w-full h-full object-cover"></div>
+          </div>
+        </div>
+      </div>
+    </section><!-- Pricing Section -->
+    <section id="membresias" class="py-24 bg-bg-base">
+      <div class="container mx-auto px-6">
+        <div class="text-center mb-16"><span
+            class="text-accent-pink font-semibold tracking-widest uppercase text-xs">Planes</span>
+          <h2
+            class="font-heading text-4xl md:text-6xl font-bold mt-4 text-text-primary">
+            Elige tu membresía</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+          <div
+            class="border border-border-line p-8 rounded-3xl hover:-rotate-2 transition-transform bg-bg-elevated">
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Básico</h3>
+            <p class="text-text-secondary text-sm mb-6">Para empezar tu camino
+            </p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 29<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Acceso a
+                rutinas</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Guías
+                básicas</li>
+            </ul><a href="#"
+              class="block w-full py-3 border border-accent-pink text-accent-pink rounded-full text-center font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme</a>
+          </div>
+          <div
+            class="border-2 border-accent-pink p-8 rounded-3xl relative bg-bg-elevated">
+            <span
+              class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-accent-pink text-bg-base px-4 py-1 rounded-full text-xs font-bold uppercase">Recomendado</span>
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Premium</h3>
+            <p class="text-text-secondary text-sm mb-6">La experiencia completa
+            </p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 49<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Todo del
+                Básico</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Sesiones en
+                vivo</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Soporte
+                prioritario</li>
+            </ul><a href="#"
+              class="block w-full py-3 bg-accent-pink text-bg-base rounded-full text-center font-semibold hover:bg-text-primary hover:text-bg-base transition-all">Unirme</a>
+          </div>
+          <div
+            class="border border-border-line p-8 rounded-3xl hover:rotate-2 transition-transform bg-bg-elevated">
+            <h3 class="font-heading text-2xl font-bold mb-2 text-text-primary">
+              Plan Anual</h3>
+            <p class="text-text-secondary text-sm mb-6">Ahorra un 20%</p>
+            <div class="text-4xl font-bold mb-6 text-text-primary">$us 39<span
+                class="text-lg text-text-secondary">/mes</span></div>
+            <ul class="space-y-3 mb-8 text-text-secondary">
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Todo del
+                Premium</li>
+              <li><i class="fas fa-check text-accent-pink mr-2"></i>Facturación
+                anual</li>
+            </ul><a href="#"
+              class="block w-full py-3 border border-accent-pink text-accent-pink rounded-full text-center font-semibold hover:bg-accent-pink hover:text-bg-base transition-all">Unirme</a>
+          </div>
+        </div>
+      </div>
+    </section><!-- FAQ Section -->
+    <section id="faq" class="py-24 bg-bg-elevated">
+      <div class="container mx-auto px-6 max-w-3xl">
+        <h2
+          class="font-heading text-4xl md:text-5xl font-bold mb-12 text-center text-text-primary">
+          Preguntas frecuentes</h2>
+        <div class="space-y-4">
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Necesito experiencia previa?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">No, los programas están
+                diseñados para todos los niveles, desde principiantes hasta
+                avanzados.</p>
+            </div>
+          </div>
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Qué equipo necesito?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">Solo unas mancuernas y una
+                banda elástica. La mayoría de ejercicios se pueden adaptar.</p>
+            </div>
+          </div>
+          <div class="faq-item border-b border-border-line pb-4"><button
+              class="w-full flex justify-between items-center py-4 text-left font-semibold text-lg text-text-primary">
+              ¿Puedo cancelar cuando quiera?
+              <span class="faq-icon text-accent-pink transition-transform"><i
+                  class="fas fa-plus"></i></span></button>
+            <div class="faq-answer">
+              <p class="pb-4 text-text-secondary">Sí, puedes cancelar tu
+                suscripción mensual en cualquier momento sin penalización.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- Footer -->
+    <footer id="unete"
+      class="bg-bg-base pt-24 pb-12 border-t border-border-line">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-12 mb-16">
+          <div class="md:col-span-2"><a href="#" class="inline-block mb-6"><img
+                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/kxmCS0uETRXhSaxpNduPF6s7FUp1%2Fb0c243d5-c54b-4abc-881b-3fc6783f60a9.png"
+                alt="VIVIPREFIT logo: Large pink cursive 'V' centered over a horizontal pink barbell. A small pink heart "
+                class="h-24 md:h-32 w-auto object-contain"></a>
+            <p class="mt-6 text-text-secondary max-w-sm">Tu espacio para
+              entrenar, aprender y crecer. Únete hoy y empieza a sentirte
+              fuerte.</p>
+          </div>
+          <div>
+            <h4 class="font-bold mb-6 text-text-primary">Enlaces</h4>
+            <ul class="space-y-3 text-text-secondary">
+              <li><a href="#metodo"
+                  class="hover:text-accent-pink transition-colors">Método</a>
+              </li>
+              <li><a href="#incluido"
+                  class="hover:text-accent-pink transition-colors">Qué
+                  incluye</a></li>
+              <li><a href="#membresias"
+                  class="hover:text-accent-pink transition-colors">Membresías</a>
+              </li>
+              <li><a href="#faq"
+                  class="hover:text-accent-pink transition-colors">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-6 text-text-primary">Legal</h4>
+            <ul class="space-y-3 text-text-secondary">
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Política de
+                  Privacidad</a></li>
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Términos de
+                  Uso</a></li>
+              <li><a href="#"
+                  class="hover:text-accent-pink transition-colors">Contacto</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="flex flex-col md:flex-row justify-between items-center pt-12 border-t border-border-line">
+          <p class="text-text-secondary text-sm mb-4 md:mb-0">© 2026 VIVIPREFIT.
+            Todos los derechos reservados.</p>
+          <div class="flex space-x-6"><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-instagram text-xl"></i></a><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-tiktok text-xl"></i></a><a href="#"
+              class="text-text-secondary hover:text-accent-pink transition-colors"><i
+                class="fab fa-youtube text-xl"></i></a></div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      document.querySelectorAll('.faq-item button').forEach(btn =>
+      {
+        btn.addEventListener('click', () =>
+        {
+          btn.closest('.faq-item').classList.toggle('active');
+        });
+      });
+    </script>
+  </body>
+
+</html>
