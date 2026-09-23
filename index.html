@@ -692,35 +692,64 @@
         
         // --- EDITOR INLINE DE IMÁGENES (admin) ---
         function createHiddenFileInput() {
-            let inp = document.getElementById('__image_upload_input');
+            let inp = document.getElementById('__media_upload_input');
             if(inp) return inp;
             inp = document.createElement('input');
             inp.type = 'file';
-            inp.accept = 'image/*';
-            inp.id = '__image_upload_input';
+            inp.accept = 'image/*,video/*';
+            inp.id = '__media_upload_input';
             inp.className = 'hidden';
             inp.addEventListener('change', async (e) => {
                 const file = e.target.files[0];
                 if(!file) return;
                 const key = inp.dataset.currentKey;
-                if(!key) return alert('Key de imagen no encontrada');
+                if(!key) return alert('Key de media no encontrada');
                 try {
-                    // subir a Supabase Storage (bucket 'landing-images')
+                    const isVideo = file.type && file.type.startsWith('video/');
+                    // subir a Supabase Storage (bucket 'landing-media')
                     const path = `${key}-${Date.now()}-${file.name}`;
-                    const uploadRes = await supabase.storage.from('landing-images').upload(path, file, { upsert: true });
+                    const bucket = 'landing-media';
+                    const uploadRes = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
                     console.log('uploadRes', uploadRes);
                     if(uploadRes.error) throw uploadRes.error;
-                    const publicUrl = supabase.storage.from('landing-images').getPublicUrl(path).data?.publicUrl || '';
+                    const publicUrl = supabase.storage.from(bucket).getPublicUrl(path).data?.publicUrl || '';
                     console.log('publicUrl', publicUrl);
                     // Guardar en landing_config
-                    await supabase.from('landing_config').upsert({ key: `image:${key}`, value: publicUrl });
-                    // Actualizar imagen en DOM
+                    await supabase.from('landing_config').upsert({ key: `media:${key}`, value: publicUrl });
+                    // Actualizar elemento en DOM (img o video)
                     const img = document.querySelector(`img[data-image-key="${key}"]`);
-                    if(img) img.src = publicUrl;
-                    alert('Imagen actualizada correctamente');
+                    const vid = document.querySelector(`video[data-media-key="${key}"]`) || document.querySelector(`video[data-image-key="${key}"]`);
+                    if(img && !isVideo) {
+                        img.src = publicUrl;
+                    } else if(vid || isVideo) {
+                        // si existe un elemento video, actualizar su source o crear uno
+                        let videoEl = vid;
+                        if(!videoEl) {
+                            // intentar reemplazar img por video
+                            const targetImg = img;
+                            if(targetImg) {
+                                videoEl = document.createElement('video');
+                                videoEl.setAttribute('controls', '');
+                                videoEl.className = targetImg.className + ' editable-media';
+                                videoEl.dataset.mediaKey = key;
+                                targetImg.replaceWith(videoEl);
+                            }
+                        }
+                        if(videoEl) {
+                            // limpiar fuentes
+                            while(videoEl.firstChild) videoEl.removeChild(videoEl.firstChild);
+                            const source = document.createElement('source');
+                            source.src = publicUrl;
+                            source.type = file.type || (isVideo ? 'video/mp4' : 'video/*');
+                            videoEl.appendChild(source);
+                            // forzar recarga
+                            videoEl.load();
+                        }
+                    }
+                    alert((isVideo ? 'Video' : 'Media') + ' actualizado correctamente');
                 } catch (err) {
-                    console.error('Error subiendo imagen', err);
-                    alert('Error al subir imagen: ' + (err.message || JSON.stringify(err)));
+                    console.error('Error subiendo media', err);
+                    alert('Error al subir media: ' + (err.message || JSON.stringify(err)));
                 } finally {
                     inp.value = '';
                     delete inp.dataset.currentKey;
